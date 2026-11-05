@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f6f7f8">
+  <meta name="description" content="Compare two versions of text side by side. See added and removed lines, ignore whitespace or case, and export the diff privately in your browser.">
+  <title>Diff Desk — Compare text versions privately</title>
+  <style>
+    :root{--ink:#172233;--muted:#637083;--line:#dce2e8;--paper:#fff;--wash:#f6f7f8;--blue:#315cc9;--blue-soft:#edf2ff;--green:#176b48;--green-soft:#e8f6ee;--red:#a33a3a;--red-soft:#fff0ef;--shadow:0 16px 40px #18263b0d}
+    *{box-sizing:border-box}body{margin:0;background:var(--wash);color:var(--ink);font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}button,input,textarea{font:inherit}button{cursor:pointer}
+    .top{height:66px;border-bottom:1px solid var(--line);background:#ffffffd9;display:flex;align-items:center;justify-content:space-between;padding:0 max(22px,calc((100vw - 1180px)/2))}.brand{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:750;letter-spacing:-.03em}.logo{width:34px;height:34px;border-radius:10px;background:#294fae;color:white;display:grid;place-items:center;font-size:18px}.top-right{color:var(--muted);font-size:12px}
+    main{max-width:1180px;margin:0 auto;padding:45px 22px 65px}.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);font-weight:750}h1{font-size:clamp(32px,4vw,46px);letter-spacing:-.055em;line-height:1.08;margin:9px 0 10px}.intro{font-size:16px;color:var(--muted);max-width:720px;margin:0 0 26px}
+    .toolbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:0 0 15px}.btn{border:1px solid var(--line);background:white;color:var(--ink);border-radius:9px;padding:9px 13px;font-size:13px;font-weight:650;min-height:38px}.btn:hover{background:#f8faff}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}.btn.primary:hover{background:#254aa9}.btn:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #7796ee78;outline-offset:2px}.spacer{flex:1}.toggle{display:inline-flex;gap:7px;align-items:center;color:#435166;font-size:12px;white-space:nowrap}.toggle input{accent-color:var(--blue)}
+    .editors{display:grid;grid-template-columns:1fr 1fr;gap:14px}.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}.card-head{display:flex;align-items:center;justify-content:space-between;padding:13px 15px;border-bottom:1px solid var(--line)}.label-wrap{display:flex;align-items:center;gap:9px}.dot{width:8px;height:8px;border-radius:50%;background:#8a95a5}.dot.old{background:#d65a56}.dot.new{background:#32a66f}.card-title{font-weight:700;font-size:13px}.line-count{font-size:11px;color:var(--muted)}.file-label{font-size:11px;color:var(--blue);font-weight:650;cursor:pointer}.file-label input{display:none}textarea{display:block;resize:vertical;width:100%;min-height:265px;border:0;padding:15px;background:#fff;color:#263448;font:12px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;outline:none}textarea::placeholder{color:#9aa5b4}
+    .summary{display:none;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}.summary.visible{display:grid}.stat{padding:12px 14px;background:#fff;border:1px solid var(--line);border-radius:11px}.stat span{display:block;font-size:11px;color:var(--muted)}.stat b{display:block;font-size:20px;letter-spacing:-.04em;margin-top:2px}.stat.add b{color:var(--green)}.stat.remove b{color:var(--red)}.stat.same b{color:var(--blue)}
+    .result{display:none;margin-top:16px}.result.visible{display:block}.result-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 9px}.result-head h2{font-size:15px;margin:0}.legend{display:flex;gap:13px;color:var(--muted);font-size:11px}.legend span{display:flex;align-items:center;gap:5px}.swatch{width:9px;height:9px;border-radius:2px}.swatch.plus{background:#5cb98a}.swatch.minus{background:#dc7974}.diffbox{overflow:auto;max-height:620px;background:white;border:1px solid var(--line);border-radius:12px}.diff-row{display:grid;grid-template-columns:42px 42px 25px minmax(0,1fr);min-height:26px;font:12px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;border-bottom:1px solid #eef0f3}.diff-row:last-child{border-bottom:0}.diff-row .ln{padding:4px 7px;text-align:right;color:#9aa4b1;background:#fafbfc;user-select:none}.diff-row .sign{padding:4px 4px;text-align:center;color:#798496}.diff-row .text{padding:4px 9px;white-space:pre;overflow-wrap:normal;min-width:max-content}.diff-row.add{background:var(--green-soft)}.diff-row.add .sign{color:var(--green);font-weight:800}.diff-row.remove{background:var(--red-soft)}.diff-row.remove .sign{color:var(--red);font-weight:800}.diff-row.context .text{color:#3c4859}.empty{padding:24px;text-align:center;color:var(--muted);font-size:13px}
+    .note{font-size:11px;color:var(--muted);margin:12px 2px}.notice{min-height:19px;color:var(--green);font-size:12px;margin-top:9px}.how{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:25px}.how article{border-radius:12px;background:#eef1f5;padding:14px}.how b{display:block;font-size:12px;margin-bottom:3px}.how span{font-size:11px;color:var(--muted)}footer{border-top:1px solid var(--line);padding:20px;text-align:center;color:var(--muted);font-size:11px}
+    @media(max-width:760px){main{padding-top:32px}.editors{grid-template-columns:1fr}.summary{grid-template-columns:repeat(2,1fr)}.spacer{flex-basis:100%;height:0}.how{grid-template-columns:1fr}.top-right{display:none}textarea{min-height:200px}}@media(max-width:440px){main{padding-left:13px;padding-right:13px}.toolbar{gap:6px}.btn{padding:8px 10px;font-size:12px}.toggle{font-size:11px}.result-head{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
+<body>
+  <header class="top"><div class="brand"><span class="logo" aria-hidden="true">±</span> Diff Desk</div><div class="top-right">A clear view of what changed.</div></header>
+  <main>
+    <div class="eyebrow">Free text comparison · Private by design</div>
+    <h1>Compare two versions, line by line.</h1>
+    <p class="intro">Find what changed between a draft, config, code snippet, or document. Your text stays in this browser tab—nothing is uploaded.</p>
+    <div class="toolbar" role="group" aria-label="Diff options">
+      <label class="toggle"><input id="ignore-space" type="checkbox"> Ignore whitespace</label>
+      <label class="toggle"><input id="ignore-case" type="checkbox"> Ignore letter case</label>
+      <label class="toggle"><input id="ignore-blank" type="checkbox"> Ignore blank lines</label>
+      <span class="spacer"></span>
+      <button class="btn" id="swap">Swap</button><button class="btn" id="clear">Clear</button><button class="btn primary" id="compare">Compare text</button>
+    </div>
+    <section class="editors" aria-label="Text to compare">
+      <article class="card"><div class="card-head"><div class="label-wrap"><span class="dot old"></span><span class="card-title">Original</span><span class="line-count" id="old-count">0 lines</span></div><label class="file-label">Open text file<input id="old-file" type="file" accept=".txt,.md,.html,.css,.js,.ts,.json,.xml,.yml,.yaml,.log,text/plain"></label></div><textarea id="old-text" spellcheck="false" aria-label="Original text" placeholder="Paste the original text here…"></textarea></article>
+      <article class="card"><div class="card-head"><div class="label-wrap"><span class="dot new"></span><span class="card-title">Updated</span><span class="line-count" id="new-count">0 lines</span></div><label class="file-label">Open text file<input id="new-file" type="file" accept=".txt,.md,.html,.css,.js,.ts,.json,.xml,.yml,.yaml,.log,text/plain"></label></div><textarea id="new-text" spellcheck="false" aria-label="Updated text" placeholder="Paste the updated version here…"></textarea></article>
+    </section>
+    <div class="notice" id="notice" role="status" aria-live="polite"></div>
+    <section class="summary" id="summary" aria-label="Comparison summary"><div class="stat add"><span>Added lines</span><b id="added">0</b></div><div class="stat remove"><span>Removed lines</span><b id="removed">0</b></div><div class="stat same"><span>Unchanged lines</span><b id="unchanged">0</b></div><div class="stat"><span>Similarity</span><b id="similarity">100%</b></div></section>
+    <section class="result" id="result" aria-labelledby="result-title"><div class="result-head"><h2 id="result-title">Line changes</h2><div class="legend"><span><i class="swatch plus"></i>Added</span><span><i class="swatch minus"></i>Removed</span></div><div><button class="btn" id="copy-diff">Copy diff</button> <button class="btn" id="download-diff">Download .diff</button></div></div><div class="diffbox" id="diffbox"></div><p class="note">Comparison is line-based. Whitespace and case options affect matching; displayed text remains unchanged. Very large comparisons may be limited to keep your browser responsive.</p></section>
+    <section class="how" aria-label="How to compare text"><article><b>1. Add both versions</b><span>Paste text or open a local text file in each panel.</span></article><article><b>2. Choose match options</b><span>Ignore spacing, letter case, or blank lines if helpful.</span></article><article><b>3. Review and share</b><span>Copy the diff or save it as a plain-text .diff file.</span></article></section>
+  </main>
+  <footer>Diff Desk · Runs in your browser · No accounts, uploads, analytics, or external libraries</footer>
+  <script>
+    (()=>{
+      const $=id=>document.getElementById(id), old=$('old-text'), neu=$('new-text');let lastDiff=[];
+      const lines=s=>s.replace(/\r\n?/g,'\n').split('\n');
+      const normalize=s=>{let t=s;if($('ignore-space').checked)t=t.replace(/\s+/g,'');if($('ignore-case').checked)t=t.toLocaleLowerCase();return t};
+      const count=(area,target)=>{const n=area.value.length?lines(area.value).length:0;$(target).textContent=`${n} ${n===1?'line':'lines'}`};
+      const setNotice=s=>$('notice').textContent=s;
+      function buildDiff(a,b){
+        const drop=$('ignore-blank').checked;const left=lines(a),right=lines(b);
+        const ai=left.map((v,i)=>({v,i})).filter(x=>!(drop&&!x.v.trim()));const bi=right.map((v,i)=>({v,i})).filter(x=>!(drop&&!x.v.trim()));
+        if((ai.length+1)*(bi.length+1)>1200000)throw new Error('This comparison is too large for the browser view. Try a smaller section of the files.');
+        const keysA=ai.map(x=>normalize(x.v)),keysB=bi.map(x=>normalize(x.v));const dp=new Array(ai.length+1);dp[ai.length]=new Uint32Array(bi.length+1);
+        for(let i=ai.length-1;i>=0;i--){const row=new Uint32Array(bi.length+1),next=dp[i+1];for(let j=bi.length-1;j>=0;j--)row[j]=keysA[i]===keysB[j]?next[j+1]+1:Math.max(next[j],row[j+1]);dp[i]=row}
+        const out=[];let i=0,j=0;while(i<ai.length&&j<bi.length){if(keysA[i]===keysB[j]){out.push({type:'context',text:right[bi[j].i],old:ai[i].i+1,neu:bi[j].i+1});i++;j++}else if(dp[i][j+1]>=dp[i+1][j]){out.push({type:'add',text:right[bi[j].i],neu:bi[j].i+1});j++}else{out.push({type:'remove',text:left[ai[i].i],old:ai[i].i+1});i++}}while(i<ai.length){out.push({type:'remove',text:left[ai[i].i],old:ai[i].i+1});i++}while(j<bi.length){out.push({type:'add',text:right[bi[j].i],neu:bi[j].i+1});j++}return out;
+      }
+      function render(diff){const box=$('diffbox');box.replaceChildren();if(!diff.length){const empty=document.createElement('div');empty.className='empty';empty.textContent='Nothing to compare yet.';box.append(empty);return}for(const d of diff){const row=document.createElement('div');row.className=`diff-row ${d.type}`;const oldN=document.createElement('span');oldN.className='ln';oldN.textContent=d.old||'';const newN=document.createElement('span');newN.className='ln';newN.textContent=d.neu||'';const sign=document.createElement('span');sign.className='sign';sign.textContent=d.type==='add'?'+':d.type==='remove'?'−':' ';const txt=document.createElement('span');txt.className='text';txt.textContent=d.text||' ';row.append(oldN,newN,sign,txt);box.append(row)}}
+      function showSummary(diff){const adds=diff.filter(x=>x.type==='add').length,removes=diff.filter(x=>x.type==='remove').length,same=diff.length-adds-removes,total=Math.max(1,same+adds+removes);$('added').textContent=adds;$('removed').textContent=removes;$('unchanged').textContent=same;$('similarity').textContent=`${Math.round(same/total*100)}%`;$('summary').classList.add('visible');$('result').classList.add('visible')}
+      function compare(){try{lastDiff=buildDiff(old.value,neu.value);render(lastDiff);showSummary(lastDiff);setNotice('Comparison ready. The text was processed locally in this tab.')}catch(e){$('summary').classList.remove('visible');$('result').classList.remove('visible');setNotice(e.message)}}
+      function exportText(){return lastDiff.map(d=>`${d.type==='add'?'+':d.type==='remove'?'-':' '} ${d.text}`).join('\n')}
+      $('compare').addEventListener('click',compare);$('swap').addEventListener('click',()=>{const t=old.value;old.value=neu.value;neu.value=t;count(old,'old-count');count(neu,'new-count');compare()});$('clear').addEventListener('click',()=>{old.value='';neu.value='';count(old,'old-count');count(neu,'new-count');lastDiff=[];$('summary').classList.remove('visible');$('result').classList.remove('visible');setNotice('Text cleared.')});
+      [[old,'old-file'],[neu,'new-file']].forEach(([area,id])=>$(id).addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{area.value=await file.text();count(area,area===old?'old-count':'new-count');setNotice(`Loaded ${file.name}. Select Compare text to review changes.`)}catch{setNotice('Could not read that file. Try a plain-text file.')}e.target.value=''}));
+      [old,neu].forEach((area,i)=>area.addEventListener('input',()=>count(area,i===0?'old-count':'new-count')));
+      $('copy-diff').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(exportText());setNotice('Diff copied to clipboard.')}catch{setNotice('Clipboard access is unavailable. You can download the .diff file instead.')}});
+      $('download-diff').addEventListener('click',()=>{const blob=new Blob([exportText()],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='comparison.diff';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)});
+      count(old,'old-count');count(neu,'new-count');
+    })();
+  </script>
+</body>
+</html>
